@@ -1,0 +1,42 @@
+version: "3.12"
+#設定yaml版本，至少要 ”3“ 以上
+
+services:
+#在services內宣告所有要建立的docker的名稱與內容
+  fastapi:
+  #第一個docker名稱
+    container_name: fastapi001
+    build: ./backend/.
+    image: yuchen75/fastapi_hw:latest
+    command: python backend/app.py
+    ports:
+      - "5001:5000" 
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+    networks:
+      - local-net
+
+  db:
+    container_name: postgres
+    image: postgres:alpine
+    hostname: db
+    restart: always
+    tty: true
+    environment:
+      POSTGRES_DB: ntue
+      POSTGRES_USER: hw
+      POSTGRES_PASSWORD: ntuedtd
+    ports:
+      - "5432:5432" 
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - local-net
+
+volumes:
+  postgres_data:
+
+networks:
+  local-net:
